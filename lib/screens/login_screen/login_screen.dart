@@ -7,6 +7,11 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('LOGIN'),
+        centerTitle: true,
+        elevation: 0,
+      ),
       body: SafeArea(
         child: LoginBody(),
         top: true,

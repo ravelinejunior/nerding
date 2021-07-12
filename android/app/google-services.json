@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "890394758697",
+    "project_id": "nerding-8f3fd",
+    "storage_bucket": "nerding-8f3fd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:890394758697:android:8c8e2ed3994ddfef44d638",
+        "android_client_info": {
+          "package_name": "br.com.raveline.nerding"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "890394758697-63g4cgh62tfq8k0f9j11vi963bpo4pm2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCT50DLqoaR_gd9d-jyOHKk2ApKhnAWWcE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "890394758697-63g4cgh62tfq8k0f9j11vi963bpo4pm2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
