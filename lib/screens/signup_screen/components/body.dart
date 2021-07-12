@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nerding/screens/dialog_box_screen/loadingDialog_screen.dart';
+import 'package:nerding/screens/login_screen/login_screen.dart';
 import 'package:nerding/screens/signup_screen/components/background.dart';
-import 'package:nerding/screens/welcome_screen/welcome_screen.dart';
 import 'package:nerding/utils/already_have_an_account_acheck.dart';
 import 'package:nerding/utils/rounded_button.dart';
 import 'package:nerding/utils/rounded_input_field.dart';
@@ -26,6 +29,9 @@ class _SignupBodyState extends State<SignupBody> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -91,10 +97,10 @@ class _SignupBodyState extends State<SignupBody> {
             AlreadyHaveAnAccountCheck(
               login: false,
               press: () {
-                Navigator.of(context).push(
+                Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) {
-                      return WelcomeScreen();
+                      return LoginScreen();
                     },
                   ),
                 );
@@ -116,5 +122,15 @@ class _SignupBodyState extends State<SignupBody> {
     } catch (error) {
       print(error);
     }
+  }
+
+  upload() async {
+    showDialog(
+      context: context,
+      builder: (context) => LoadingAlertDialogScreen(),
+    );
+
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference storage = firebaseStorage.ref().child(fileName);
   }
 }
