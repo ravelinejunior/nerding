@@ -42,7 +42,7 @@ class _SignupBodyState extends State<SignupBody> {
   @override
   Widget build(BuildContext context) {
     double _screenWidth = MediaQuery.of(context).size.width;
-    double _screenHeight = MediaQuery.of(context).size.height;
+
     return SignupBackgroundBody(
       child: SingleChildScrollView(
         child: Column(

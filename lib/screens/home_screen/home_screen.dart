@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nerding/screens/home_screen/components/upload_add_screen.dart';
 import 'package:nerding/screens/welcome_screen/welcome_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,8 +12,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
+    double _screenWidth = MediaQuery.of(context).size.width;
+    double _screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -79,6 +83,28 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+      body: Center(
+        child: Container(
+          width: _screenWidth,
+          child: _showItemList(),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Add Post',
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => UploadAdScreen(),
+          ),
+        ),
+      ),
     );
+  }
+
+  Widget _showItemList() {
+    return Container();
   }
 }
