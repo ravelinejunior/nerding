@@ -47,11 +47,10 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          next ? 'Por favor, descreva o Item.' : 'Escolha as imagens do Item',
+          next ? 'Por favor, descreva o Item.' : 'Escolha as imagens',
           style: TextStyle(
             fontSize: 16,
             fontFamily: 'VarelaRound',
-            letterSpacing: 2.0,
           ),
         ),
         actions: [
@@ -74,7 +73,7 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                     'Próximo',
                     style: TextStyle(
                       fontSize: 16,
-                      fontFamily: 'Vareja',
+                      fontFamily: 'VarelaRound',
                     ),
                   ),
                 )
