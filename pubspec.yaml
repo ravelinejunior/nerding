@@ -37,7 +37,7 @@ dependencies:
   image_picker: ^0.7.5+3
   firebase_storage: ^9.0.0
   image_slider: ^1.0.2
-  toast: ^0.1.5
+  fluttertoast: ^8.0.7
   flutter_svg: ^0.22.0
   geolocator: ^7.0.3
   geocoding: ^2.0.0

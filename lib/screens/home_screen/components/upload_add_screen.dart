@@ -4,9 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nerding/screens/dialog_box_screen/loadingDialog_screen.dart';
-import 'package:toast/toast.dart';
 
 class UploadAdScreen extends StatefulWidget {
   const UploadAdScreen({Key? key}) : super(key: key);
@@ -50,7 +50,7 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
           next ? 'Por favor, descreva o Item.' : 'Escolha as imagens do Item',
           style: TextStyle(
             fontSize: 16,
-            fontFamily: 'Lobster',
+            fontFamily: 'VarelaRound',
             letterSpacing: 2.0,
           ),
         ),
@@ -66,9 +66,7 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                       });
                     } else {
                       showToast(
-                        'Max de 5 imagens por itens.',
-                        duration: 3,
-                        gravity: Toast.CENTER,
+                        'Máximo de 5 imagens por item.',
                       );
                     }
                   },
@@ -150,7 +148,15 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
     );
   }
 
-  void showToast(String message, {int? duration, int? gravity}) {
-    Toast.show(message, context, duration: duration, gravity: gravity);
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 3,
+      backgroundColor: Colors.red,
+      fontSize: 16,
+      textColor: Colors.white,
+    );
   }
 }
