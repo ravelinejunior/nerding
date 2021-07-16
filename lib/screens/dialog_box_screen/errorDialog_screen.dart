@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nerding/screens/welcome_screen/welcome_screen.dart';
 
 class ErrorAlertDialogScreen extends StatelessWidget {
   final String? message;
