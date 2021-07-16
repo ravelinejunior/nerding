@@ -46,6 +46,7 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           next ? 'Por favor, descreva o Item.' : 'Escolha as imagens',
           style: TextStyle(
@@ -58,14 +59,14 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
               ? Container()
               : ElevatedButton(
                   onPressed: () {
-                    if (_imagesIO.length == 5) {
+                    if (_imagesIO.length > 1) {
                       setState(() {
                         uploading = true;
                         next = true;
                       });
                     } else {
                       showToast(
-                        'Máximo de 5 imagens por item.',
+                        'Mínimo de 2 imagens por item.',
                       );
                     }
                   },
@@ -143,8 +144,89 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                 ),
               ),
             )
-          : Container(),
+          : Stack(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  child: GridView.builder(
+                    itemCount: _imagesIO.length + 1,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3),
+                    itemBuilder: (context, index) {
+                      return index == 0
+                          ? InkWell(
+                              splashColor: Colors.orangeAccent,
+                              onTap: () => !uploading ? _chooseImage() : null,
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                color: Colors.orange[50],
+                                child: Center(
+                                  child: IconButton(
+                                    onPressed: () =>
+                                        !uploading ? _chooseImage() : null,
+                                    icon: Icon(Icons.add),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(
+                              margin: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: FileImage(_imagesIO[index - 1]),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                    },
+                  ),
+                ),
+                uploading
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              child: Text(
+                                'Uploading...',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            CircularProgressIndicator.adaptive(
+                              value: val,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.blue),
+                            )
+                          ],
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
     );
+  }
+
+  _chooseImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    setState(() {
+      _imagesIO.add(File(pickedFile?.path as String));
+    });
+
+    if (pickedFile?.path == null) retrieveLostData();
+  }
+
+  Future retrieveLostData() async {
+    final LostData response = await picker.getLostData();
+    if (response.isEmpty) return;
+
+    if (response.file != null) {
+      setState(() {
+        _imagesIO.add(File(response.file!.path));
+      });
+    } else {
+      print(response.file);
+    }
   }
 
   void showToast(String message) {
