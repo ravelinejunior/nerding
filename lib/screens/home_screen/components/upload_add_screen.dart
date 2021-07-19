@@ -157,9 +157,8 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                                 'itemPrice': itemPrice,
                                 'itemModel': itemModel,
                                 'itemColor': itemColor,
-                                'description': description,
-                                'urlImage1': urlImagesList[0].toString(),
-                                'urlImage2': urlImagesList[1].toString(),
+                                'urlImage': urlImagesList,
+                                /* 'urlImage2': urlImagesList[1].toString(),
                                 'urlImage3': urlImagesList[2].toString().isEmpty
                                     ? urlImagesList[2].toString()
                                     : '',
@@ -171,8 +170,9 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                                     : '',
                                 'urlImage6': urlImagesList[5].toString().isEmpty
                                     ? urlImagesList[5].toString()
-                                    : '',
-                                'imageProfile': userImageUrl,
+                                    : '', */
+                                'description': description,
+                                'imagePro': userImageUrl,
                                 'lat': position!.latitude,
                                 'long': position!.longitude,
                                 'address': completeAddress,
@@ -296,8 +296,10 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
         val = i / _imagesIO.length;
       });
 
-      _reference =
-          FirebaseStorage.instance.ref().child('Image').child(img.path);
+      _reference = FirebaseStorage.instance
+          .ref()
+          .child('Images')
+          .child(_auth.currentUser!.uid);
 
       await _reference!.putFile(img).whenComplete(() async {
         await _reference!.getDownloadURL().then((value) {
