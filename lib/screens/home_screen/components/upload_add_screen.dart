@@ -132,6 +132,13 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                       ),
                       const SizedBox(height: 8),
                       TextField(
+                        decoration: InputDecoration(hintText: 'Modelo'),
+                        onChanged: (value) {
+                          this.itemModel = value;
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
                         decoration:
                             InputDecoration(hintText: 'Digite uma descrição'),
                         onChanged: (value) {
