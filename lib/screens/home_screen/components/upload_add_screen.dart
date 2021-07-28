@@ -165,20 +165,6 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                                 'itemModel': itemModel,
                                 'itemColor': itemColor,
                                 'urlImage': urlImagesList,
-
-                                /* 'urlImage2': urlImagesList[1].toString(),
-                                'urlImage3': urlImagesList[2].toString().isEmpty
-                                    ? urlImagesList[2].toString()
-                                    : '',
-                                'urlImage4': urlImagesList[3].toString().isEmpty
-                                    ? urlImagesList[3].toString()
-                                    : '',
-                                'urlImage5': urlImagesList[4].toString().isEmpty
-                                    ? urlImagesList[4].toString()
-                                    : '',
-                                'urlImage6': urlImagesList[5].toString().isEmpty
-                                    ? urlImagesList[5].toString()
-                                    : '', */
                                 'description': description,
                                 'imagePro': userImageUrl,
                                 'lat': position!.latitude,
