@@ -62,7 +62,7 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: true,
           title: Text(
             next ? 'Por favor, descreva o Item.' : 'Escolha as imagens',
             style: TextStyle(
@@ -350,10 +350,27 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                 onPressed: () {
                   setState(() {
                     next = false;
+                    uploading = false;
                     Navigator.of(context).pop();
                   });
                 },
                 child: Text('Sim'),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(
+                    () {
+                      next = false;
+                      uploading = false;
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Text('Voltar Tela Inicial'),
               ),
             ],
           ),

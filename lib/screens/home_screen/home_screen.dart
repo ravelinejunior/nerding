@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +5,8 @@ import 'package:nerding/screens/dialog_box_screen/loadingDialog_screen.dart';
 import 'package:nerding/screens/home_screen/components/upload_add_screen.dart';
 import 'package:nerding/screens/welcome_screen/welcome_screen.dart';
 import 'package:nerding/utils/global_vars.dart';
+import 'package:transparent_image/transparent_image.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -44,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     double _screenWidth = MediaQuery.of(context).size.width;
+    // ignore: unused_local_variable
     double _screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
@@ -141,9 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
               return LoadingAlertDialogScreen(
                 message: 'Loading',
               );
-            } else if (snapshot.connectionState == ConnectionState.none) {
-              //TODO 1: VERIFICAR SE EXISTE DADO
-              return Container();
             } else {
               return ListView.builder(
                 itemCount: items!.docs.length,
@@ -200,6 +198,66 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                           ),
                         ),
+                        InkWell(
+                          onDoubleTap: () {},
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: FadeInImage.memoryNetwork(
+                              placeholder: kTransparentImage,
+                              image: items!.docs[index].get('urlImage')[0],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Text(
+                            '\$${items!.docs[index].get('itemPrice')}',
+                            style: TextStyle(
+                              fontFamily: 'Bebas',
+                              letterSpacing: 1.5,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Align(
+                                      child: Text(
+                                          items!.docs[index].get('itemModel')),
+                                      alignment: Alignment.topLeft,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Icon(Icons.watch_later_outlined),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Align(
+                                      child: Text(
+                                        timeago.format(
+                                          items!.docs[index]
+                                              .get('time')
+                                              .toDate(),
+                                        ),
+                                      ),
+                                      alignment: Alignment.topLeft,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
                       ],
                     ),
                   );
@@ -210,11 +268,17 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       } else {
         //list empty
-        return Container();
+        return Center(
+          child: Text('Lista Vazia'),
+        );
       }
     } else {
       //return null
-      return Container();
+      return Container(
+        child: Center(
+          child: Text('Loading...'),
+        ),
+      );
     }
   }
 
