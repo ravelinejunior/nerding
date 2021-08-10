@@ -293,7 +293,16 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
       _reference = FirebaseStorage.instance
           .ref()
           .child('Images')
-          .child(_auth.currentUser!.uid);
+          .child(_auth.currentUser!.uid)
+          .child(DateTime.now().minute.toString() +
+              "/" +
+              DateTime.now().day.toString() +
+              "-" +
+              DateTime.now().month.toString() +
+              "-" +
+              DateTime.now().year.toString() +
+              "-" +
+              DateTime.now().millisecond.toString());
 
       await _reference!.putFile(img).whenComplete(() async {
         await _reference!.getDownloadURL().then((value) {

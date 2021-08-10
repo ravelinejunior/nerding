@@ -1,7 +1,11 @@
+import 'dart:html';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nerding/screens/home_screen/components/upload_add_screen.dart';
 import 'package:nerding/screens/welcome_screen/welcome_screen.dart';
+import 'package:nerding/utils/global_vars.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,6 +16,29 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   FirebaseAuth _auth = FirebaseAuth.instance;
+  QuerySnapshot? items;
+  final userRef = FirebaseFirestore.instance.collection('Users');
+  final itemsRef = FirebaseFirestore.instance.collection('Items');
+
+  @override
+  void initState() {
+    super.initState();
+
+    idUser = _auth.currentUser!.uid;
+    userEmail = _auth.currentUser!.email!;
+
+    itemsRef
+        .where('status', isEqualTo: 'approved')
+        .orderBy('time', descending: true)
+        .get()
+        .then((result) {
+      setState(() {
+        items = result;
+      });
+    });
+
+    getUserData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,5 +133,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _showItemList() {
     return Container();
+  }
+
+  getUserData() {
+    userRef.doc(idUser).get().then((result) {
+      setState(() {
+        userImageUrl = result.data()!['imagePro'];
+        getUserName = result.data()!['userName'];
+      });
+    });
   }
 }
