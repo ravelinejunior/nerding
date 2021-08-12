@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nerding/screens/dialog_box_screen/loadingDialog_screen.dart';
 import 'package:nerding/screens/home_screen/components/upload_add_screen.dart';
+import 'package:nerding/screens/image_slider_screen/image_slider_screen.dart';
 import 'package:nerding/screens/welcome_screen/welcome_screen.dart';
 import 'package:nerding/utils/global_vars.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -199,7 +200,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         InkWell(
-                          onDoubleTap: () {},
+                          onDoubleTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ImageSliderScreen(
+                                  title: items!.docs[index].get('itemModel'),
+                                  itemColor:
+                                      items!.docs[index].get('itemColor'),
+                                  userNumber:
+                                      items!.docs[index].get('userPhoneNumber'),
+                                  description:
+                                      items!.docs[index].get('description'),
+                                  lat: items!.docs[index].get('lat'),
+                                  long: items!.docs[index].get('long'),
+                                  address: items!.docs[index].get('address'),
+                                  urlImage: items!.docs[index].get('urlImage'),
+                                ),
+                              ),
+                            );
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(16),
                             child: FadeInImage.memoryNetwork(
@@ -224,35 +243,57 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8),
-                                    child: Align(
-                                      child: Text(
-                                          items!.docs[index].get('itemModel')),
-                                      alignment: Alignment.topLeft,
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8),
+                                      child: Align(
+                                        child: Text(items!.docs[index]
+                                                    .get('itemModel')
+                                                    .toString()
+                                                    .length >
+                                                15
+                                            ? items!.docs[index]
+                                                .get('itemModel')
+                                                .toString()
+                                                .substring(0, 17)
+                                                .replaceRange(14, 16, '...')
+                                            : items!.docs[index]
+                                                .get('itemModel')
+                                                .toString()),
+                                        alignment: Alignment.topLeft,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                              Row(
-                                children: [
-                                  Icon(Icons.watch_later_outlined),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8),
-                                    child: Align(
-                                      child: Text(
-                                        timeago.format(
-                                          items!.docs[index]
-                                              .get('time')
-                                              .toDate(),
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.watch_later_outlined),
+                                      Expanded(
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 8),
+                                          child: Align(
+                                            child: Text(
+                                              timeago.format(
+                                                items!.docs[index]
+                                                    .get('time')
+                                                    .toDate(),
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            alignment: Alignment.topLeft,
+                                          ),
                                         ),
                                       ),
-                                      alignment: Alignment.topLeft,
-                                    ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ],
                           ),
