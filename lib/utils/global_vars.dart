@@ -26,3 +26,25 @@ String IMAGE_PRO = 'imagePro';
 String TIME = 'time';
 // ignore: non_constant_identifier_names
 String STATUS = 'status';
+
+getUserAddress() async {
+  Position newPosition = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high);
+  position = newPosition;
+  placeMarks =
+      await placemarkFromCoordinates(position!.latitude, position!.longitude);
+
+  final placeMark = placeMarks![0];
+
+  final String newCompleteAddress =
+      '${placeMark.subThoroughfare} ${placeMark.thoroughfare}, '
+      '${placeMark.subThoroughfare} ${placeMark.locality}, '
+      '${placeMark.subAdministrativeArea}, '
+      '${placeMark.administrativeArea} ${placeMark.postalCode}, '
+      '${placeMark.country}';
+
+  completeAddress = newCompleteAddress;
+  print(completeAddress);
+
+  return completeAddress;
+}

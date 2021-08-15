@@ -1,6 +1,10 @@
+import 'package:brasil_fields/brasil_fields.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nerding/screens/dialog_box_screen/loadingDialog_screen.dart';
 import 'package:nerding/screens/home_screen/components/upload_add_screen.dart';
 import 'package:nerding/screens/image_slider_screen/image_slider_screen.dart';
@@ -21,6 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   QuerySnapshot? items;
   final userRef = FirebaseFirestore.instance.collection('Users');
   final itemsRef = FirebaseFirestore.instance.collection('Items');
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isSuccessful = false;
 
   @override
   void initState() {
@@ -48,12 +54,19 @@ class _HomeScreenState extends State<HomeScreen> {
     // ignore: unused_local_variable
     double _screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0,
         title: const Text('Home'),
         centerTitle: false,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              ),
+            );
+          },
           icon: Icon(
             Icons.refresh,
             color: Colors.white,
@@ -135,6 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _showItemList() {
+    List<dynamic> urlImages;
     if (items != null) {
       if (items!.docs.isNotEmpty) {
         return FutureBuilder(
@@ -148,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: items!.docs.length,
                 padding: const EdgeInsets.all(8),
                 itemBuilder: (_, index) {
+                  urlImages = items!.docs[index].get('urlImage');
                   return Card(
                     clipBehavior: Clip.antiAlias,
                     child: Column(
@@ -183,13 +198,48 @@ class _HomeScreenState extends State<HomeScreen> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       InkWell(
-                                        onTap: () {},
-                                        child: Icon(Icons.edit_outlined),
+                                        onTap: () {
+                                          if (items!.docs[index].get('Uid') ==
+                                              idUser) {
+                                            showDialogForUpdateData(
+                                              items!.docs[index].id,
+                                              items!.docs[index]
+                                                  .get('userName'),
+                                              items!.docs[index]
+                                                  .get('userPhoneNumber'),
+                                              items!.docs[index]
+                                                  .get('itemPrice'),
+                                              items!.docs[index]
+                                                  .get('itemModel'),
+                                              items!.docs[index]
+                                                  .get('itemColor'),
+                                              items!.docs[index]
+                                                  .get('description'),
+                                              items!.docs[index].get('address'),
+                                              _scaffoldKey.currentContext,
+                                            ).then((value) {
+                                              if (isSuccessful) {
+                                                Navigator.of(context)
+                                                    .pushReplacement(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        HomeScreen(),
+                                                  ),
+                                                );
+                                              }
+                                            });
+                                          }
+                                        },
+                                        child: Icon(
+                                          Icons.edit,
+                                          color: Colors.orange,
+                                        ),
                                       ),
                                       const SizedBox(width: 20),
                                       InkWell(
                                         onDoubleTap: () {},
-                                        child: Icon(Icons.delete_forever_sharp),
+                                        child: Icon(Icons.delete,
+                                            color: Colors.red),
                                       ),
                                     ],
                                   )
@@ -221,9 +271,35 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(16),
-                            child: FadeInImage.memoryNetwork(
-                              placeholder: kTransparentImage,
-                              image: items!.docs[index].get('urlImage')[0],
+                            child: CarouselSlider(
+                              items: urlImages
+                                  .map((image) => ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: FadeInImage.memoryNetwork(
+                                          placeholder: kTransparentImage,
+                                          image: image,
+                                          height: 220,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ))
+                                  .toList(),
+                              options: CarouselOptions(
+                                height: 400,
+                                aspectRatio: 16 / 13,
+                                viewportFraction: 1,
+                                initialPage: 0,
+                                enableInfiniteScroll: true,
+                                reverse: false,
+                                autoPlay: false,
+                                autoPlayInterval: Duration(seconds: 3),
+                                autoPlayAnimationDuration:
+                                    Duration(milliseconds: 800),
+                                autoPlayCurve: Curves.easeInCubic,
+                                enlargeCenterPage: true,
+                                scrollDirection: Axis.horizontal,
+                              ),
                             ),
                           ),
                         ),
@@ -317,17 +393,183 @@ class _HomeScreenState extends State<HomeScreen> {
       //return null
       return Container(
         child: Center(
-          child: Text('Loading...'),
+          child: LoadingAlertDialogScreen(
+            message: 'Loading',
+          ),
         ),
       );
     }
   }
 
-  getUserData() {
+  Future<bool> showDialogForUpdateData(
+    selecedtDoc,
+    oldUserName,
+    oldPhoneNumber,
+    oldItemPrice,
+    oldItemName,
+    oldItemColor,
+    oldItemDescription,
+    oldAddress,
+    currentContext,
+  ) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (currentContext) => SingleChildScrollView(
+        child: AlertDialog(
+          title: Text(
+            'Atualizar Anúncio',
+            style: TextStyle(fontSize: 20, fontFamily: 'Bebas'),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                initialValue: oldUserName,
+                decoration: InputDecoration(
+                  hintText: 'Digite seu nome',
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    oldUserName = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                initialValue: oldPhoneNumber,
+                decoration: InputDecoration(
+                  hintText: 'Digite seu telefone',
+                ),
+                inputFormatters: [
+                  // obrigatório
+                  FilteringTextInputFormatter.digitsOnly,
+                  TelefoneInputFormatter(),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    oldPhoneNumber = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                initialValue: oldItemPrice,
+                decoration: InputDecoration(
+                  hintText: 'Digite o preço',
+                ),
+                inputFormatters: [
+                  // obrigatório
+                  FilteringTextInputFormatter.digitsOnly,
+                  RealInputFormatter(
+                    centavos: true,
+                  ),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    oldItemPrice = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                initialValue: oldItemColor,
+                decoration: InputDecoration(
+                  hintText: 'Digite a cor do item',
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    oldItemColor = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                initialValue: oldItemName,
+                decoration: InputDecoration(
+                  hintText: 'Digite o modelo',
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    oldItemName = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                initialValue: oldItemDescription,
+                decoration: InputDecoration(
+                  hintText: 'Digite a descrição do item',
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    oldItemDescription = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+          contentPadding: const EdgeInsets.all(8),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(currentContext).pop();
+              },
+              child: Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(currentContext).pop();
+
+                final Map<String, dynamic> itemData = {
+                  'userNumber': oldUserName,
+                  'userPhoneNumber': oldPhoneNumber,
+                  'itemPrice': oldItemPrice,
+                  'itemModel': oldItemName,
+                  'itemColor': oldItemColor,
+                  'description': oldItemDescription,
+                };
+                itemsRef.doc(selecedtDoc).update(itemData).then(
+                  (value) {
+                    isSuccessful = true;
+                    Fluttertoast.showToast(
+                      msg: "Item atualizado com sucesso!",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 2,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                  },
+                ).catchError((onError) {
+                  Fluttertoast.showToast(
+                    msg: onError.toString(),
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 3,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                });
+              },
+              child: Text('Atualizar'),
+            ),
+          ],
+        ),
+      ),
+    );
+    return isSuccessful;
+  }
+
+  void getUserData() {
     userRef.doc(idUser).get().then((result) {
       setState(() {
         userImageUrl = result.data()!['imagePro'];
         getUserName = result.data()!['userName'];
+        getUserAddress();
       });
     });
   }

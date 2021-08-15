@@ -5,8 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nerding/screens/dialog_box_screen/loadingDialog_screen.dart';
 import 'package:nerding/screens/home_screen/home_screen.dart';
@@ -24,12 +22,6 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
   bool next = false;
 
   double val = 0;
-  String imageFile = "";
-  String imageFile2 = "";
-  String imageFile3 = "";
-  String imageFile4 = "";
-  String imageFile5 = "";
-  String imageFile6 = "";
 
   CollectionReference? imageRef;
   CollectionReference? itensRef =
@@ -311,28 +303,6 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
         });
       });
     }
-  }
-
-  getUserAddress() async {
-    Position newPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    position = newPosition;
-    placeMarks =
-        await placemarkFromCoordinates(position!.latitude, position!.longitude);
-
-    final placeMark = placeMarks![0];
-
-    final String newCompleteAddress =
-        '${placeMark.subThoroughfare} ${placeMark.thoroughfare}, '
-        '${placeMark.subThoroughfare} ${placeMark.locality}, '
-        '${placeMark.subAdministrativeArea}, '
-        '${placeMark.administrativeArea} ${placeMark.postalCode}, '
-        '${placeMark.country}';
-
-    completeAddress = newCompleteAddress;
-    print(completeAddress);
-
-    return completeAddress;
   }
 
   Future<bool> _onWillPop() async {
