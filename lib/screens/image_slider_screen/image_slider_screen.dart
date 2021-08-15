@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:map_launcher/map_launcher.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class ImageSliderScreen extends StatefulWidget {
@@ -148,7 +149,27 @@ class _ImageSliderScreenState extends State<ImageSliderScreen> {
                 child: ConstrainedBox(
                   constraints: BoxConstraints.tightFor(width: 368),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final availableMaps = await MapLauncher.installedMaps;
+
+                      await availableMaps.first.showMarker(
+                        coords: Coords(widget.lat, widget.long),
+                        title: widget.address,
+                        description: widget.description,
+                      );
+
+                      /*  if (await MapLauncher.isMapAvailable(MapType.google) ==
+                              true ||
+                          await MapLauncher.isMapAvailable(MapType.waze) ==
+                              true) {
+                        await MapLauncher.showMarker(
+                          mapType: MapType.google,
+                          coords: Coords(widget.lat, widget.long),
+                          title: widget.address,
+                          description: widget.description,
+                        );
+                      } */
+                    },
                     child: Text('Localização do Vendedor'),
                   ),
                 ),
