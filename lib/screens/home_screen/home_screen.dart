@@ -151,236 +151,230 @@ class _HomeScreenState extends State<HomeScreen> {
     List<dynamic> urlImages;
     if (items != null) {
       if (items!.docs.isNotEmpty) {
-        return FutureBuilder(
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return LoadingAlertDialogScreen(
-                message: 'Loading',
-              );
-            } else {
-              return ListView.builder(
-                itemCount: items!.docs.length,
-                padding: const EdgeInsets.all(8),
-                itemBuilder: (_, index) {
-                  urlImages = items!.docs[index].get('urlImage');
-                  return Card(
-                    clipBehavior: Clip.antiAlias,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: ListTile(
-                            leading: InkWell(
-                              splashColor: Colors.orange,
-                              onTap: () {},
-                              child: Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                      items!.docs[index].get('imagePro'),
-                                    ),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            title: InkWell(
-                              onTap: () {},
-                              child: Text(
-                                items!.docs[index].get('userName'),
-                              ),
-                            ),
-                            trailing: items!.docs[index].get('Uid') == idUser
-                                ? Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          if (items!.docs[index].get('Uid') ==
-                                              idUser) {
-                                            showDialogForUpdateData(
-                                              items!.docs[index].id,
-                                              items!.docs[index]
-                                                  .get('userName'),
-                                              items!.docs[index]
-                                                  .get('userPhoneNumber'),
-                                              items!.docs[index]
-                                                  .get('itemPrice'),
-                                              items!.docs[index]
-                                                  .get('itemModel'),
-                                              items!.docs[index]
-                                                  .get('itemColor'),
-                                              items!.docs[index]
-                                                  .get('description'),
-                                              items!.docs[index].get('address'),
-                                              _scaffoldKey.currentContext,
-                                            ).then((value) {
-                                              if (isSuccessful) {
-                                                Navigator.of(context)
-                                                    .pushReplacement(
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        HomeScreen(),
-                                                  ),
-                                                );
-                                              }
-                                            });
-                                          }
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          color: Colors.orange,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 20),
-                                      InkWell(
-                                        onDoubleTap: () {},
-                                        child: Icon(Icons.delete,
-                                            color: Colors.red),
-                                      ),
-                                    ],
-                                  )
-                                : Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [],
-                                  ),
-                          ),
-                        ),
-                        InkWell(
-                          onDoubleTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ImageSliderScreen(
-                                  title: items!.docs[index].get('itemModel'),
-                                  itemColor:
-                                      items!.docs[index].get('itemColor'),
-                                  userNumber:
-                                      items!.docs[index].get('userPhoneNumber'),
-                                  description:
-                                      items!.docs[index].get('description'),
-                                  lat: items!.docs[index].get('lat'),
-                                  long: items!.docs[index].get('long'),
-                                  address: items!.docs[index].get('address'),
-                                  urlImage: items!.docs[index].get('urlImage'),
-                                ),
-                              ),
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: CarouselSlider(
-                              items: urlImages
-                                  .map((image) => ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: FadeInImage.memoryNetwork(
-                                          placeholder: kTransparentImage,
-                                          image: image,
-                                          height: 220,
-                                          width:
-                                              MediaQuery.of(context).size.width,
+        return StreamBuilder(
+          stream: itemsRef.snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData)
+              return LoadingAlertDialogScreen(message: 'Loading...');
+            else
+              return ListView(
+                children: snapshot.data!.docs
+                    .map((document) {
+                      urlImages = document.get('urlImage');
+                      return Card(
+                          clipBehavior: Clip.antiAlias,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: ListTile(
+                                  leading: InkWell(
+                                    splashColor: Colors.orange,
+                                    onTap: () {},
+                                    child: Container(
+                                      width: 60,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                          image: NetworkImage(
+                                            document.get('imagePro'),
+                                          ),
                                           fit: BoxFit.cover,
                                         ),
-                                      ))
-                                  .toList(),
-                              options: CarouselOptions(
-                                height: 400,
-                                aspectRatio: 16 / 13,
-                                viewportFraction: 1,
-                                initialPage: 0,
-                                enableInfiniteScroll: true,
-                                reverse: false,
-                                autoPlay: false,
-                                autoPlayInterval: Duration(seconds: 3),
-                                autoPlayAnimationDuration:
-                                    Duration(milliseconds: 800),
-                                autoPlayCurve: Curves.easeInCubic,
-                                enlargeCenterPage: true,
-                                scrollDirection: Axis.horizontal,
+                                      ),
+                                    ),
+                                  ),
+                                  title: InkWell(
+                                    onTap: () {},
+                                    child: Text(
+                                      document.get('userName'),
+                                    ),
+                                  ),
+                                  trailing: document.get('Uid') == idUser
+                                      ? Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                if (document.get('Uid') ==
+                                                    idUser) {
+                                                  setState(() {
+                                                    showDialogForUpdateData(
+                                                      document.id,
+                                                      document.get('userName'),
+                                                      document.get(
+                                                          'userPhoneNumber'),
+                                                      document.get('itemPrice'),
+                                                      document.get('itemModel'),
+                                                      document.get('itemColor'),
+                                                      document
+                                                          .get('description'),
+                                                      document.get('address'),
+                                                      _scaffoldKey
+                                                          .currentContext,
+                                                    );
+                                                  });
+                                                }
+                                              },
+                                              child: Icon(
+                                                Icons.edit,
+                                                color: Colors.orange,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 20),
+                                            InkWell(
+                                              onDoubleTap: () {},
+                                              child: Icon(Icons.delete,
+                                                  color: Colors.red),
+                                            ),
+                                          ],
+                                        )
+                                      : Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [],
+                                        ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: Text(
-                            '\$${items!.docs[index].get('itemPrice')}',
-                            style: TextStyle(
-                              fontFamily: 'Bebas',
-                              letterSpacing: 1.5,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
+                              InkWell(
+                                onDoubleTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ImageSliderScreen(
+                                        title: document.get('itemModel'),
+                                        itemColor: document.get('itemColor'),
+                                        userNumber:
+                                            document.get('userPhoneNumber'),
+                                        description:
+                                            document.get('description'),
+                                        lat: document.get('lat'),
+                                        long: document.get('long'),
+                                        address: document.get('address'),
+                                        urlImage: document.get('urlImage'),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: CarouselSlider(
+                                    items: urlImages
+                                        .map((image) => ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: FadeInImage.memoryNetwork(
+                                                placeholder: kTransparentImage,
+                                                image: image,
+                                                height: 220,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ))
+                                        .toList(),
+                                    options: CarouselOptions(
+                                      height: 400,
+                                      aspectRatio: 16 / 13,
+                                      viewportFraction: 1,
+                                      initialPage: 0,
+                                      enableInfiniteScroll: true,
+                                      reverse: false,
+                                      autoPlay: false,
+                                      autoPlayInterval: Duration(seconds: 3),
+                                      autoPlayAnimationDuration:
+                                          Duration(milliseconds: 800),
+                                      autoPlayCurve: Curves.easeInCubic,
+                                      enlargeCenterPage: true,
+                                      scrollDirection: Axis.horizontal,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: Text(
+                                  '\$${document.get('itemPrice')}',
+                                  style: TextStyle(
+                                    fontFamily: 'Bebas',
+                                    letterSpacing: 1.5,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
                                 child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 8),
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 8),
+                                            child: Align(
+                                              child: Text(document
+                                                          .get('itemModel')
+                                                          .toString()
+                                                          .length >
+                                                      15
+                                                  ? document
+                                                      .get('itemModel')
+                                                      .toString()
+                                                      .substring(0, 17)
+                                                      .replaceRange(
+                                                          14, 16, '...')
+                                                  : document
+                                                      .get('itemModel')
+                                                      .toString()),
+                                              alignment: Alignment.topLeft,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
                                       child: Align(
-                                        child: Text(items!.docs[index]
-                                                    .get('itemModel')
-                                                    .toString()
-                                                    .length >
-                                                15
-                                            ? items!.docs[index]
-                                                .get('itemModel')
-                                                .toString()
-                                                .substring(0, 17)
-                                                .replaceRange(14, 16, '...')
-                                            : items!.docs[index]
-                                                .get('itemModel')
-                                                .toString()),
-                                        alignment: Alignment.topLeft,
+                                        alignment: Alignment.bottomRight,
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.watch_later_outlined),
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8),
+                                                child: Align(
+                                                  child: Text(
+                                                    timeago.format(
+                                                      document
+                                                          .get('time')
+                                                          .toDate(),
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  alignment: Alignment.topLeft,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.watch_later_outlined),
-                                      Expanded(
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 8),
-                                          child: Align(
-                                            child: Text(
-                                              timeago.format(
-                                                items!.docs[index]
-                                                    .get('time')
-                                                    .toDate(),
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            alignment: Alignment.topLeft,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                              const SizedBox(height: 12),
                             ],
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                      ],
-                    ),
-                  );
-                },
+                          ));
+                    })
+                    .toList()
+                    .reversed
+                    .toList(),
               );
-            }
           },
         );
       } else {
@@ -424,6 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(height: 8),
               TextFormField(
                 initialValue: oldUserName,
                 decoration: InputDecoration(
@@ -523,7 +518,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.of(currentContext).pop();
 
                 final Map<String, dynamic> itemData = {
-                  'userNumber': oldUserName,
+                  'userName': oldUserName,
                   'userPhoneNumber': oldPhoneNumber,
                   'itemPrice': oldItemPrice,
                   'itemModel': oldItemName,
