@@ -224,7 +224,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                             const SizedBox(width: 20),
                                             InkWell(
-                                              onDoubleTap: () {},
+                                              onTap: () {
+                                                deleteAd(document.id);
+                                              },
                                               child: Icon(Icons.delete,
                                                   color: Colors.red),
                                             ),
@@ -557,6 +559,64 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     return isSuccessful;
+  }
+
+  Future<void> deleteAd(selecedtDoc) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (currentContext) => AlertDialog(
+        title: Text(
+          'Deletar Anúncio',
+          style: TextStyle(fontSize: 20, fontFamily: 'Bebas'),
+        ),
+        content: Container(
+          height: MediaQuery.of(context).size.height * 0.05,
+          child: Text('Deseja realmente remover esse anúncio?'),
+        ),
+        contentPadding: const EdgeInsets.all(8),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(currentContext).pop();
+            },
+            child: Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(currentContext).pop();
+
+              itemsRef
+                  .doc(selecedtDoc)
+                  .delete()
+                  .then((value) => {
+                        Fluttertoast.showToast(
+                          msg: "Item deletado com sucesso!",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 2,
+                          backgroundColor: Colors.green,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        ),
+                      })
+                  .catchError((onError) {
+                Fluttertoast.showToast(
+                  msg: "Item atualizado com sucesso!",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 2,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0,
+                );
+              });
+            },
+            child: Text('Deletar'),
+          ),
+        ],
+      ),
+    );
   }
 
   void getUserData() {
