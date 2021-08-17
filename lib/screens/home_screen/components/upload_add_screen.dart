@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:brasil_fields/brasil_fields.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nerding/screens/dialog_box_screen/loadingDialog_screen.dart';
@@ -96,6 +98,7 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextField(
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(hintText: 'Seu nome'),
                         onChanged: (value) {
                           this.userName = value;
@@ -103,20 +106,35 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                       ),
                       const SizedBox(height: 8),
                       TextField(
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(hintText: 'Seu telefone'),
                         onChanged: (value) {
                           this.userNumber = value;
                         },
+                        inputFormatters: [
+                          // obrigatório
+                          FilteringTextInputFormatter.digitsOnly,
+                          TelefoneInputFormatter(),
+                        ],
                       ),
                       const SizedBox(height: 8),
                       TextField(
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(hintText: 'Preço'),
                         onChanged: (value) {
                           this.itemPrice = value;
                         },
+                        inputFormatters: [
+                          // obrigatório
+                          FilteringTextInputFormatter.digitsOnly,
+                          RealInputFormatter(
+                            centavos: true,
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 8),
                       TextField(
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(hintText: 'Cor'),
                         onChanged: (value) {
                           this.itemColor = value;
@@ -124,6 +142,7 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                       ),
                       const SizedBox(height: 8),
                       TextField(
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(hintText: 'Modelo'),
                         onChanged: (value) {
                           this.itemModel = value;
@@ -131,6 +150,7 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                       ),
                       const SizedBox(height: 8),
                       TextField(
+                        textInputAction: TextInputAction.done,
                         decoration:
                             InputDecoration(hintText: 'Digite uma descrição'),
                         onChanged: (value) {
@@ -163,7 +183,7 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
                                 'long': position!.longitude,
                                 'address': completeAddress,
                                 'time': DateTime.now(),
-                                'status': 'not approved',
+                                'status': 'approved',
                               };
 
                               itensRef!.add(adData).then((value) {
@@ -354,7 +374,7 @@ class _UploadAdScreenState extends State<UploadAdScreen> {
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 3,
-      backgroundColor: Colors.red,
+      backgroundColor: Colors.orange,
       fontSize: 16,
       textColor: Colors.white,
     );
