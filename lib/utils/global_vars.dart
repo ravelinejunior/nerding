@@ -38,7 +38,7 @@ getUserAddress() async {
 
   final String newCompleteAddress =
       '${placeMark.subThoroughfare} ${placeMark.thoroughfare}, '
-      '${placeMark.subThoroughfare} ${placeMark.locality}, '
+      '${placeMark.subLocality} ${placeMark.locality}, '
       '${placeMark.subAdministrativeArea}, '
       '${placeMark.administrativeArea} ${placeMark.postalCode}, '
       '${placeMark.country}';
