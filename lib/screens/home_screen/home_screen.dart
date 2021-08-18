@@ -9,6 +9,7 @@ import 'package:nerding/screens/dialog_box_screen/loadingDialog_screen.dart';
 import 'package:nerding/screens/home_screen/components/upload_add_screen.dart';
 import 'package:nerding/screens/image_slider_screen/image_slider_screen.dart';
 import 'package:nerding/screens/profile_screen/profile_screen.dart';
+import 'package:nerding/screens/search_screen/search_screen.dart';
 import 'package:nerding/screens/welcome_screen/welcome_screen.dart';
 import 'package:nerding/utils/global_vars.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -89,7 +90,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => SearchScreen(),
+              ));
+            },
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: Icon(
